@@ -22,7 +22,7 @@ const createSendToken = (user, statusCode, res) => {
       user
     }
   });
-}
+};
 
 exports.signup = catchAsync(async (req, res, next) => {
   // const newUser = await User.create(req.body);
@@ -138,11 +138,17 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   }
 });
 
-exports.resetPassword = catchAsync( async (req, res, next) => {
-  const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
+exports.resetPassword = catchAsync(async (req, res, next) => {
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(req.params.token)
+    .digest('hex');
 
-  const user = await User.findOne({passwordResetToken:hashedToken,passwordResetExpires:{$gt:Date.now()}});
-  
+  const user = await User.findOne({
+    passwordResetToken: hashedToken,
+    passwordResetExpires: { $gt: Date.now() }
+  });
+
   if (!user) {
     return next(new AppError('Token is invalid or has expired', 400));
   }
@@ -156,7 +162,7 @@ exports.resetPassword = catchAsync( async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
-exports.updatePassword = catchAsync( async (req, res, next) => {
+exports.updatePassword = catchAsync(async (req, res, next) => {
   // 1) Get user from collection
   const user = await User.findById(req.user.id).select('+password');
 
